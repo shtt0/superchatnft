@@ -1,0 +1,10 @@
+/* src/styles/SuperChatComponent.module.css */
+.superChatContainer {
+  border: 2px solid #007bff;
+  padding: 15px;
+  border-radius: 8px;
+}
+
+.btn {
+  margin-top: 20px;
+}
