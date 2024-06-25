@@ -6,7 +6,7 @@ import styles from "../styles/NFTMintComponent.module.css";
 const NFTMintComponent = ({ liveUrl, liverId, timestamp }) => {
   return (
     <div className="container mt-5">
-      <h5>Super Chatしたあなた限定 Moment NFTをMintしましょう！</h5>
+      <h3>Super Chatしたあなた限定 Moment NFTをMintしましょう！</h3>
       <p>NFTには以下の情報がMetaデータとして記録されます。</p>
       <table className="table">
         <thead>

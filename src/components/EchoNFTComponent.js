@@ -5,7 +5,7 @@ import styles from "../styles/EchoNFTComponent.module.css";
 const EchoNFTComponent = ({ records }) => {
   return (
     <div className="container mt-5">
-      <h5>Super Chatしたユーザに Echoを送ろう！（ないすぱ！）</h5>
+      <h3>Super Chatしたユーザに Echoを送ろう！（ないすぱ！）</h3>
       <p>Moment NFTの子NFT=Echo NFTを発行できます。</p>
       <table className="table">
         <thead>
@@ -14,6 +14,7 @@ const EchoNFTComponent = ({ records }) => {
             <th>Amount</th>
             <th>Echo Count</th>
             <th>Timestamp</th>
+            <th>Let's Echo</th>
           </tr>
         </thead>
         <tbody>

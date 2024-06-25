@@ -1,6 +1,31 @@
 /* src/styles/globals.css */
 body {
   font-family: Arial, sans-serif;
+  background: linear-gradient(to bottom right, #358582, #ddd242);
+  color: white;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+a,
+span,
+div {
+  color: white;
+}
+
+.line-divider {
+  border-bottom: 1px solid white;
+  margin-bottom: 10px;
+  padding-bottom: 10px;
+}
+
+.spacing {
+  margin-bottom: 20px;
 }
 
 .embed-responsive {

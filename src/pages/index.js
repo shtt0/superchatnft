@@ -4,6 +4,7 @@ import YouTubeEmbedWithTimestamp from "../components/YouTubeEmbedWithTimestamp";
 import NFTMintComponent from "../components/NFTMintComponent";
 import EchoNFTComponent from "../components/EchoNFTComponent";
 import SuperChatComponent from "../components/SuperChatComponent";
+import CheckNFTs from "../components/CheckNFTs";
 
 const records = [
   { user: "0x1a...", amount: "$100", echoCount: 108, timestamp: "0:04:00" },
@@ -20,7 +21,7 @@ export default function Home() {
   return (
     <div className="container mt-5">
       <div className="d-flex justify-content-between align-items-center mb-4">
-        <h1>Site name</h1>
+        <h2>Super Chat NFT Demo</h2>
         <ConnectWallet accentColor="black" colorMode="dark" />
       </div>
       <div className="row">
@@ -38,10 +39,16 @@ export default function Home() {
           </div>
         </div>
         <div className="col-md-4">
-          <h5>※ライブ配信のタイトル※</h5>
-          <p>※配信者名※</p>
-          <p>※配信者ID※</p>
-          <p>※ライブ配信の説明※</p>
+          <h4 className="line-divider spacing">
+            MetaMe オンライン勉強会｜MetaMeが作るメタバース×オンチェーンの世界
+            ※ライブ配信のタイトル
+          </h4>
+          <p className="line-divider spacing">web3FM ※配信者名※</p>
+          <p className="line-divider spacing">
+            0x8d77B4E72c5aec74d24176BB8dC21843dCFc6e54
+            ※配信者ID=NFTの元権利者判別のためのAddress※
+          </p>
+          <p className="spacing">※ライブ配信の説明が入ります※</p>
         </div>
       </div>
       <SuperChatComponent onSuperChat={handleSuperChat} />
@@ -56,6 +63,7 @@ export default function Home() {
         parentTokenId={1}
         records={records}
       />
+      <CheckNFTs />
     </div>
   );
 }
