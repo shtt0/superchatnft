@@ -1,11 +1,16 @@
+// src/pages/api/check-nfts-api.js
 import { ThirdwebSDK } from "@thirdweb-dev/sdk";
 import { ethers } from "ethers";
 
 const provider = new ethers.providers.JsonRpcProvider(
-  process.env.POLYGON_RPC_URL
+  process.env.RPC_URL,
+  process.env.NETWORK
 );
-const sdk = new ThirdwebSDK(provider);
-const contractAddress = process.env.CONTRACT_ADDRESS;
+const sdk = new ThirdwebSDK(provider, {
+  clientId: process.env.THIRDWEB_CLIENT_ID,
+  clientSecret: process.env.THIRDWEB_SECRET_KEY,
+});
+const contractAddress = process.env.NFT_CONTRACT_ADDRESS;
 const contract = sdk.getContract(contractAddress);
 
 export default async function handler(req, res) {
@@ -15,45 +20,49 @@ export default async function handler(req, res) {
   }
 
   const { walletA, walletB } = req.body;
-  console.log("Received request with Wallet A:", walletA, "Wallet B:", walletB);
 
   try {
-    const walletANFTs = await contract.call("tokensOfOwner", walletA);
-    const walletBNFTs = await contract.call("tokensOfOwner", walletB);
+    const getOwnedTokenIds = async (walletAddress) => {
+      const sentLogs = await contract.events.query("Transfer", {
+        from: walletAddress,
+      });
+      const receivedLogs = await contract.events.query("Transfer", {
+        to: walletAddress,
+      });
 
-    const walletAMetaData = await Promise.all(
-      walletANFTs.map(async (id) => {
-        return await contract.call("tokenMetaData", id);
-      })
-    );
+      const logs = sentLogs
+        .concat(receivedLogs)
+        .sort(
+          (a, b) =>
+            a.blockNumber - b.blockNumber ||
+            a.transactionIndex - b.transactionIndex
+        );
 
-    const walletBMetaData = await Promise.all(
-      walletBNFTs.map(async (id) => {
-        return await contract.call("tokenMetaData", id);
-      })
-    );
+      const owned = new Set();
 
-    const commonLiverIds = walletAMetaData
-      .filter((dataA) => dataA.amount > 0)
-      .map((dataA) => dataA.liverAddress)
-      .filter((liverAddressA) =>
-        walletBMetaData.some(
-          (dataB) => dataB.liverAddress === liverAddressA && dataB.amount > 0
-        )
-      );
+      for (const log of logs) {
+        if (log.args) {
+          const { from, to, tokenId } = log.args;
+          if (to.toLowerCase() === walletAddress.toLowerCase()) {
+            owned.add(tokenId.toString());
+          } else if (from.toLowerCase() === walletAddress.toLowerCase()) {
+            owned.delete(tokenId.toString());
+          }
+        }
+      }
 
-    const commonEchoNFTs = walletAMetaData.filter((dataA) =>
-      walletBMetaData.some(
-        (dataB) =>
-          dataB.liveUrl === dataA.liveUrl &&
-          dataB.liverAddress === dataA.liverAddress &&
-          dataB.timeStamp === dataA.timeStamp
-      )
+      return Array.from(owned);
+    };
+
+    const walletATokenIds = await getOwnedTokenIds(walletA);
+    const walletBTokenIds = await getOwnedTokenIds(walletB);
+
+    const commonTokenIds = walletATokenIds.filter((tokenId) =>
+      walletBTokenIds.includes(tokenId)
     );
 
     res.status(200).json({
-      commonLiverIds,
-      commonEchoNFTs,
+      commonTokenIds,
     });
   } catch (error) {
     console.error("Error:", error);
